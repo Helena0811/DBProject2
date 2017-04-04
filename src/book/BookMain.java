@@ -215,12 +215,20 @@ public class BookMain extends JFrame implements ItemListener, ActionListener{
 	}
 	
 	// 초기화 작업
+	// 필요한 기능
+	/*
+	 * 1. DB연결(DBManager를 통해)
+	 * 2. 상위 카테고리에 DB연동을 통해 카테고리 목록 얻어오기
+	 * 3. 도서 목록 출력을 위한 JTable 패널과 Grid 패널에게 connection 전달
+	 * */
+	
 	public void init(){
 		// choice 컴포넌트에 최상위 목록 추가
 		ch_top.add("▼ 상위 카테고리");
 		ch_sub.add("▼ 하위 카테고리");
 		
-		//manager=DBManager.getInstance();
+		// DB의 연결 환경설정을 담당하는 DBManager의 getConnection을 통해 Connection 얻어올 수 있음
+		//DBManager manager=DBManager.getInstance();
 		// 연결하고 연결된 값 받기
 		con=manager.getConnection();
 		
@@ -263,7 +271,6 @@ public class BookMain extends JFrame implements ItemListener, ActionListener{
 		// p_table은 JPanel로 선언되어 있으므로 자식인 TablePanel로 형변환
 		((TablePanel)p_table).setConnection(con);
 		((GridPanel)p_grid).setConnection(con);
-	
 
 	}
 	
@@ -306,6 +313,8 @@ public class BookMain extends JFrame implements ItemListener, ActionListener{
 			
 			// rs에 담겨진 레코드 1개는 SubCategory 클래스의 인스턴스 1개로 받을 수 있음			
 			while(rs.next()){
+				
+				// DTO를 사용하는 이유 : 한 건의 레코드를 담기 위한 저장 공간 용도(즉, 레코드를 설명하는 테이블 당 하나라고 보면 됨)
 				// 각 인스턴스에 해당하는 SubCategory 클래스 생성
 				SubCategory dto=new SubCategory();
 				
@@ -343,6 +352,10 @@ public class BookMain extends JFrame implements ItemListener, ActionListener{
 	}
 	
 	// 상품 등록 메소드
+	/*
+	 * 1. 현재 선택된 subcategory index 구하기
+	 * 2. SubCategory DTO 클래스에 입력값을 저장(+ 쿼리 실행)
+	 * */
 	public void regist(){
 		// 현재 선택한 subcategory choice의 index를 구하고, 
 		// 그 index로 ArrayList를 접근하여 객체를 반환받으면 정보를 유용하게 사용 가능
@@ -386,7 +399,8 @@ public class BookMain extends JFrame implements ItemListener, ActionListener{
 				((TablePanel)p_table).init();				// 조회
 				((TablePanel)p_table).table.updateUI();		// UI 갱신
 				
-				((GridPanel)p_grid).loadData();
+				// 등록을 완료하면 Grid목록 갱신
+				((GridPanel)p_grid).loadData();				// 조회
 				
 			}
 			else{
@@ -422,7 +436,7 @@ public class BookMain extends JFrame implements ItemListener, ActionListener{
 	}
 	/*
 	 * 이미지 복사하기
-	 * 유저가 선택한 이미지를, 개발자가 지정한 위치로 복사! -> 현재 프로젝트의 data폴더
+	 * 유저가 선택한 이미지를 개발자가 지정한 위치로 복사! -> 현재 프로젝트의 data폴더
 	 * */
 	public void copy(){
 		// 유저가 선택한 이미지 불러오기
@@ -433,6 +447,7 @@ public class BookMain extends JFrame implements ItemListener, ActionListener{
 			//fos=new FileOutputStream("C:/java_workspace2/DBProject2/data/"+file.getName());
 			fos=new FileOutputStream("data/"+file.getName());
 			
+			// 주의)
 			int data;					// 데이터가 있는지 없는지만 판단(얼마나 읽어들였는지 데이터의 갯수)
 			byte[] b=new byte[1024];	// 읽어들인 데이터는 여기에 저장됨!!!
 			
@@ -447,7 +462,6 @@ public class BookMain extends JFrame implements ItemListener, ActionListener{
 				// if문을 만나지 않을 때 
 				// public void write(byte[] b)
 				fos.write(b);
-				fos.flush();
 			}
 			JOptionPane.showMessageDialog(this, " 등록 성공");
 		} catch (FileNotFoundException e) {
@@ -494,10 +508,10 @@ public class BookMain extends JFrame implements ItemListener, ActionListener{
 		}
 	}
 	
+	// 등록 버튼 구현
 	public void actionPerformed(ActionEvent e) {
-		System.out.println("나 눌렀닝");
-		regist();
-		
+		//System.out.println("나 눌렀닝");
+		regist();	// 등록 메소드 호출
 	}
 	
 	public static void main(String[] args) {

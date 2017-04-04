@@ -22,6 +22,7 @@ import javax.swing.table.TableModel;
 
 public class TablePanel extends JPanel{
 	// DB 연동이 되려면 PreparedStatement가 있어야 하는데, PreparedStatement는 인터페이스로 connection에 의존적
+	// BookMain의 con=manager.getConnection();
 	// 따라서, BookMain의 Connection을 생성자의 인수로 넘겨받자! -> JTable이 생성되는 시점에서 con은 생성되어 있지 않으므로 메소드로 변경하자!
 	Connection con;
 	JTable table;
@@ -30,7 +31,7 @@ public class TablePanel extends JPanel{
 	
 	// list는 동기화를 지원하지 않기 때문에, 고속의 속도 기대 가능
 	// Vector는 동기화를 지원해줌(안전하지만, 고속의 속도는 기대하기 힘듬)
-	// 동기화(Synchronization) : 특정 쓰레드가 사용중인 경우 동시에 움직이는 다른 쓰레드가 접근할 수 있음
+	// 동기화(Synchronization) : 특정 쓰레드가 사용중인 경우 동시에 움직이는 다른 쓰레드가 접근할 수 없음
 	
 	// Vector와 ArrayList는 둘 다 같다
 	// 차이점 : 동기화  지원 여부
@@ -54,7 +55,8 @@ public class TablePanel extends JPanel{
 		
 		// DB 연동이 먼저 되어야 함
 		init();
-
+		
+		// TableModel은 내부 익명 클래스로 구현
 		// 테이블 모델을 JTable에 적용
 		model=new AbstractTableModel() {
 					
@@ -68,14 +70,16 @@ public class TablePanel extends JPanel{
 			public int getColumnCount() {
 				return cols;
 			}
+			// ★다시 보기★
 			public Object getValueAt(int row, int col) {
-				// public JTable(Vector row,Vector columnNames)
+				// public JTable(Vector row, Vector columnNames)
 				// vectors of Vectors
 				/*
 				 * 원래는 x[row], y[row] -> x[data], x[col]로 
 				 * */	
 				
 				// list vector안에 data vector가 들어있음
+				// data는 rs로부터 가져오는 값	ex) rs.getString("book_name")
 				// 따라서, row는 list의 행
 				Vector vec=(Vector)list.get(row);	
 				return vec.elementAt(col);
