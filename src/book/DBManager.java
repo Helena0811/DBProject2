@@ -30,7 +30,7 @@ public class DBManager {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		
+	
 	}
 	public static DBManager getInstance() {
 		//인스턴스가 null이면 꽃이 다시 피게 해줌
