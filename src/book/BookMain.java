@@ -9,6 +9,7 @@ import java.awt.Checkbox;
 import java.awt.CheckboxGroup;
 import java.awt.Choice;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Image;
@@ -353,10 +354,16 @@ public class BookMain extends JFrame implements ItemListener, ActionListener{
 	
 	// 상품 등록 메소드
 	/*
+	 * 1. 기존에 등록된 것이 있다면(자식이 있다면, 추가된) 컴포넌트 지우기
 	 * 1. 현재 선택된 subcategory index 구하기
 	 * 2. SubCategory DTO 클래스에 입력값을 저장(+ 쿼리 실행)
 	 * */
 	public void regist(){
+		
+		// grid패널에 소속된 컴포넌트 갯수 구하기
+		Component[] comp=p_grid.getComponents();
+		System.out.println("포함된 자식은"+comp.length);
+		
 		// 현재 선택한 subcategory choice의 index를 구하고, 
 		// 그 index로 ArrayList를 접근하여 객체를 반환받으면 정보를 유용하게 사용 가능
 		int index=ch_sub.getSelectedIndex();
